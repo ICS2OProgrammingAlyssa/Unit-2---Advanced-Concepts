@@ -41,7 +41,7 @@ end
 
 -- The function that will go to the main menu 
 local function gotoMainMenu()
-    composer.gotoScene( "main_menu" )
+    composer.gotoScene( "main_menu", {effect = "fromRight", time = 1000})
 end
 
 -----------------------------------------------------------------------------------------
