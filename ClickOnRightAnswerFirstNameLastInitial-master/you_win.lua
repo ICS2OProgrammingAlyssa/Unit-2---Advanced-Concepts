@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------------------------
--- you_lose.lua
+-- you_win.lua
 -- Created by: Gil Robern
--- Modified by: Your Name
+-- Modified by: Alyssa
 -- Date: Month Day, Year
 -- Description: This shows the player that they lost the game and plays a booing sound.
 -----------------------------------------------------------------------------------------
@@ -18,7 +18,7 @@ local widget = require( "widget" )
 -----------------------------------------------------------------------------------------
 
 -- Naming Scene
-sceneName = "you_lose"
+sceneName = "you_win"
 
 -----------------------------------------------------------------------------------------
 
@@ -31,12 +31,15 @@ local scene = composer.newScene( sceneName )
 
 -- local variables for the scene
 local bkg
-local youLoseSound
+local youWinSound
+
+-- create the you win sound
+youWinSound = audio.loadSound( "Sounds/youWinSound.wav" )
 
 -----------------------------------------------------------------------------------------
+-- LOCAL FUNCTIONS
+-----------------------------------------------------------------------------------------
 
--- create the sound effect
-youLoseSound = audio.loadSound( "Sounds/Kids Booing.mp3" )
 -----------------------------------------------------------------------------------------
 -- GLOBAL SCENE FUNCTIONS
 -----------------------------------------------------------------------------------------
@@ -48,7 +51,7 @@ function scene:create( event )
     local sceneGroup = self.view
 
     -- Display background
-    bkg = display.newImage("Images/You Lose.png")
+    bkg = display.newImage("Images/You Win.png")
     bkg.x = display.contentCenterX
     bkg.y = display.contentCenterY
     bkg.width = display.contentWidth
@@ -68,7 +71,7 @@ function scene:show( event )
     local sceneGroup = self.view
 
     -- play the sound effect
-    audio.play(youLoseSound)
+    audio.play( youWinSound )
 
     -----------------------------------------------------------------------------------------
 
