@@ -1,9 +1,8 @@
 -----------------------------------------------------------------------------------------
--- you_win.lua
--- Created by: Gil Robern
--- Modified by: Alyssa
--- Date: Month Day, Year
--- Description: This shows the player that they won the game and plays a cheer sound.
+--
+-- SceneTemplate.lua
+-- Scene Template (Composer API)
+--
 -----------------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------
@@ -26,24 +25,19 @@ sceneName = "you_win"
 local scene = composer.newScene( sceneName )
 
 -----------------------------------------------------------------------------------------
--- LOCAL VARIABLES
+-- FORWARD REFERENCES
 -----------------------------------------------------------------------------------------
 
 -- local variables for the scene
 local bkg
-local youWinSound
+local youWinSound = audio.loadSound( "Sounds/Cheer.m4a")
 
--- create the you win sound
-youWinSound = audio.loadSound( "Sounds/youWinSound.wav" )
-
+----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
 -- LOCAL FUNCTIONS
 -----------------------------------------------------------------------------------------
 
------------------------------------------------------------------------------------------
--- GLOBAL SCENE FUNCTIONS
------------------------------------------------------------------------------------------
-
+--------------------------------------------------------------------------------------
 -- The function called when the screen doesn't exist
 function scene:create( event )
 
@@ -51,16 +45,20 @@ function scene:create( event )
     local sceneGroup = self.view
 
     -- Display background
-    bkg = display.newImage("Images/You Win.png")
+    bkg = display.newImage("Images/YouWin.png")
     bkg.x = display.contentCenterX
     bkg.y = display.contentCenterY
     bkg.width = display.contentWidth
     bkg.height = display.contentHeight
-    -----------------------------------------------------------------------------------------     
-
+   
     -- Associating display objects with this scene 
     sceneGroup:insert( bkg )
-end
+  
+end    
+
+-----------------------------------------------------------------------------------------
+-- GLOBAL SCENE FUNCTIONS
+-----------------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------
 
@@ -70,7 +68,7 @@ function scene:show( event )
     -- Creating a group that associates objects with the scene
     local sceneGroup = self.view
 
-    -- play the sound effect
+    -- play the you lose sound effect
     audio.play( youWinSound )
 
     -----------------------------------------------------------------------------------------

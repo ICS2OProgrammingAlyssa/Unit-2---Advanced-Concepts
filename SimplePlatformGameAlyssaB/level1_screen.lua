@@ -73,6 +73,7 @@ local floor
 
 local ball1
 local ball2
+local ball3
 local theBall
 
 local questionsAnswered = 0
@@ -176,6 +177,10 @@ local function YouLoseTransition()
     composer.gotoScene( "you_lose" )
 end
 
+local function YouWinTransition()
+    composer.gotoScene( "you_win" )
+end
+
 local function onCollision( self, event )
     -- for testing purposes
     --print( event.target )        --the first object in the collision
@@ -240,9 +245,10 @@ local function onCollision( self, event )
         end
 
         if (event.target.myName == "door") then
-            --check to see if the user has answered 5 questions
+            --check to see if the user has answered 3questions
             if (questionsAnswered == 3) then
                 -- after getting 3 questions right, go to the you win screen
+                YouWinTransition()
             end
         end        
 
@@ -337,19 +343,18 @@ end
 -- GLOBAL FUNCTIONS
 -----------------------------------------------------------------------------------------
 
-function ResumeGame()
-
+function ResumeGame( )
     -- make character visible again
     character.isVisible = true
-    
+
     if (questionsAnswered > 0) then
-        if (theBall ~= nil) and (theBall.isBodyActive == true) then
+        if (theBall ~= nil) and (theBall.isBodyacting == true) then
             physics.removeBody(theBall)
-            theBall.isVisible = false
+            theBall.isvisible = false
         end
     end
-
 end
+
 
 -----------------------------------------------------------------------------------------
 -- GLOBAL SCENE FUNCTIONS
@@ -533,14 +538,17 @@ function scene:create( event )
     ball2.y = 170
     ball2.myName = "ball2"
 
-     --ball3
+    -- Insert objects into the scene group in order to ONLY be associated with this scene
+    sceneGroup:insert( ball2 )
+
+    --ball3
     ball3 = display.newImageRect ("Images/SoccerBall.png", 70, 70)
     ball3.x = 955
     ball3.y = 140
     ball3.myName = "ball3"
 
     -- Insert objects into the scene group in order to ONLY be associated with this scene
-    sceneGroup:insert( ball2 )
+    sceneGroup:insert( ball3 )
 
     -- create the pop sound
     popSound = audio.loadSound( "Sounds/Pop.mp3")
