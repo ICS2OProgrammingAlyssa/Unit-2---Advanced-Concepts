@@ -78,7 +78,10 @@ local theBall
 
 local questionsAnswered = 0
 
-local popSound
+local dieSound
+
+local backgroundMusic
+local backgroundMusicChannel
 
 -----------------------------------------------------------------------------------------
 -- LOCAL SCENE FUNCTIONS
@@ -171,6 +174,7 @@ end
 local function MakeHeartsVisible()
     heart1.isVisible = true
     heart2.isVisible = true
+    heart3.isVisible = true
 end
 
 local function YouLoseTransition()
@@ -191,14 +195,12 @@ local function onCollision( self, event )
 
     if ( event.phase == "began" ) then
 
-        --Pop sound
-        popSoundChannel = audio.play(popSound)
-
         if  (event.target.myName == "spikes1") or 
             (event.target.myName == "spikes2") or
             (event.target.myName == "spikes3") then
 
             -- add sound effect here
+            dieSoundChannel = audio.play(dieSound)
 
             -- remove runtime listeners that move the character
             RemoveArrowEventListeners()
@@ -210,16 +212,26 @@ local function onCollision( self, event )
             -- decrease number of lives
             numLives = numLives - 1
 
-            if (numLives == 1) then
+            if (numLives == 2) then
+                -- update hearts
+                heart1.isVisible = true
+                heart2.isVisible = true
+                heart3.isVisible = false
+
+                timer.performWithDelay(200, ReplaceCharacter) 
+
+            elseif (numLives == 1) then
                 -- update hearts
                 heart1.isVisible = true
                 heart2.isVisible = false
-                timer.performWithDelay(200, ReplaceCharacter) 
+                heart3.isVisible = false
+                timer.performWithDelay(200, ReplaceCharacter)
 
             elseif (numLives == 0) then
                 -- update hearts
                 heart1.isVisible = false
                 heart2.isVisible = false
+                heart3.isVisible = false
                 timer.performWithDelay(200, YouLoseTransition)
             end
         end
@@ -348,9 +360,9 @@ function ResumeGame( )
     character.isVisible = true
 
     if (questionsAnswered > 0) then
-        if (theBall ~= nil) and (theBall.isBodyacting == true) then
+        if (theBall ~= nil) and (theBall.isBodyActive == true) then
             physics.removeBody(theBall)
-            theBall.isvisible = false
+            theBall.isVisible = false
         end
     end
 end
@@ -472,6 +484,14 @@ function scene:create( event )
     -- Insert objects into the scene group in order to ONLY be associated with this scene
     sceneGroup:insert( heart2 )
 
+    heart3 = display.newImageRect("Images/heart.png", 80, 80)
+    heart3.x = 210
+    heart3.y = 50
+    heart3.isVisible = true
+
+    -- Insert objects into the scene group in order to ONLY be associated with this scene
+    sceneGroup:insert( heart3 )
+
     --Insert the right arrow
     rArrow = display.newImageRect("Images/RightArrowUnpressed.png", 100, 50)
     rArrow.x = display.contentWidth * 9.2 / 10
@@ -550,8 +570,11 @@ function scene:create( event )
     -- Insert objects into the scene group in order to ONLY be associated with this scene
     sceneGroup:insert( ball3 )
 
-    -- create the pop sound
-    popSound = audio.loadSound( "Sounds/Pop.mp3")
+    -- create the die sound
+    dieSound = audio.loadSound( "Sounds/Pop.mp3")
+
+    -- create the background background Music
+    backgroundMusic = audio.loadSound("Sounds/backgroundMusic.mp3")
 
 end --function scene:create( event )
 
@@ -582,8 +605,11 @@ function scene:show( event )
         -- Insert code here to make the scene come alive.
         -- Example: start timers, begin animation, play audio, etc.
 
-        numLives = 2
+        numLives = 3
         questionsAnswered = 0
+
+        -- play the background Music
+        backgroundMusicChannel = audio.play(backgroundMusic)
 
         -- make all soccer balls visible
         MakeSoccerBallsVisible()
@@ -619,6 +645,8 @@ function scene:hide( event )
         -- Called when the scene is on screen (but is about to go off screen).
         -- Insert code here to "pause" the scene.
         -- Example: stop timers, stop animation, stop audio, etc.
+
+        backgroundMusic = audio.stop()
 
     -----------------------------------------------------------------------------------------
 

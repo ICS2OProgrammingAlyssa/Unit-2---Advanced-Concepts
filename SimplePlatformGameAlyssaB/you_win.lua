@@ -31,6 +31,7 @@ local scene = composer.newScene( sceneName )
 -- local variables for the scene
 local bkg
 local youWinSound = audio.loadSound( "Sounds/Cheer.m4a")
+local youWinSoundChannel
 
 ----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
@@ -68,9 +69,6 @@ function scene:show( event )
     -- Creating a group that associates objects with the scene
     local sceneGroup = self.view
 
-    -- play the you lose sound effect
-    audio.play( youWinSound )
-
     -----------------------------------------------------------------------------------------
 
     local phase = event.phase
@@ -87,6 +85,7 @@ function scene:show( event )
         -- Called when the scene is now on screen.
         -- Insert code here to make the scene come alive.
         -- Example: start timers, begin animation, play audio, etc.
+        youWinSoundChannel = audio.play( youWinSound )
     end
 
 end

@@ -73,6 +73,11 @@ local userAnswerBoxPlaceholder
 -- sound effects
 local correctSound
 local booSound
+local backgroundMusic
+
+-- keeps track of how many answers the user got right and wrong
+local numCorrect
+local numWrong
 
 -----------------------------------------------------------------------------------------
 -- LOCAL FUNCTIONS
@@ -115,7 +120,7 @@ local function DetermineAlternateAnswers()
     alternateAnswerBox2.text = alternateAnswer2
 
     -- generate incorrect answer and set it in the textbox
-    alternateAnswer3 = correctAnswer * math.random(1, 2)
+    alternateAnswer3 = correctAnswer * math.random(2, 3)
     alternateAnswerBox3.text = alternateAnswer3
 
 -------------------------------------------------------------------------------------------
@@ -224,6 +229,11 @@ local function YouWinTransitionLevel1( )
     composer.gotoScene("you_win", {effect = "fade", time = 500})
 end
 
+-- Transitioning Function to YouLose screen
+local function YouLoseTransitionLevel1( )
+    composer.gotoScene("you_lose", {effect = "fade", time = 500})
+end
+
 -- Function to Restart Level 1
 local function RestartLevel1()
     DisplayQuestion()
@@ -233,9 +243,22 @@ end
 
 -- Function to Check User Input
 local function CheckUserAnswerInput()
-          
-    timer.performWithDelay(1600, RestartLevel1) 
+    if (correctAnswer == userAnswer) then
+        if (numCorrect == 3) then
+            YouWinTransitionLevel1()
+        else
+            timer.performWithDelay(1600, RestartLevel1)
+        end
+    else
+        if (numWrong == 2) then
+            YouLoseTransitionLevel1()
+        else
+            timer.performWithDelay(1600, RestartLevel1)
+        end
+    end
 end
+
+
 
 local function TouchListenerAnswerbox(touch)
     --only work if none of the other boxes have been touched
@@ -268,6 +291,8 @@ local function TouchListenerAnswerbox(touch)
                 answerbox.x = userAnswerBoxPlaceholder.x
                 answerbox.y = userAnswerBoxPlaceholder.y
                 userAnswer = correctAnswer
+                numCorrect = numCorrect + 1
+                audio.play(correctSound)
 
                 -- call the function to check if the user's input is correct or not
                 CheckUserAnswerInput()
@@ -306,8 +331,9 @@ local function TouchListenerAnswerBox1(touch)
 
                 alternateAnswerBox1.x = userAnswerBoxPlaceholder.x
                 alternateAnswerBox1.y = userAnswerBoxPlaceholder.y
-
                 userAnswer = alternateAnswer1
+                numWrong = numWrong + 1
+                audio.play(booSound)
 
                 -- call the function to check if the user's input is correct or not
                 CheckUserAnswerInput()
@@ -347,6 +373,8 @@ local function TouchListenerAnswerBox2(touch)
                 alternateAnswerBox2.x = userAnswerBoxPlaceholder.x
                 alternateAnswerBox2.y = userAnswerBoxPlaceholder.y
                 userAnswer = alternateAnswer2
+                numWrong = numWrong + 1
+                audio.play(booSound)
 
                 -- call the function to check if the user's input is correct or not
                 CheckUserAnswerInput()
@@ -387,6 +415,8 @@ local function TouchListenerAnswerBox3(touch)
                 alternateAnswerBox3.x = userAnswerBoxPlaceholder.x
                 alternateAnswerBox3.y = userAnswerBoxPlaceholder.y
                 userAnswer = alternateAnswer3
+                numWrong = numWrong + 1
+                audio.play(booSound)
 
                 -- call the function to check if the user's input is correct or not
                 CheckUserAnswerInput()
@@ -477,8 +507,10 @@ function scene:create( event )
     userAnswerBoxPlaceholder.x = display.contentWidth * 0.6
     userAnswerBoxPlaceholder.y = display.contentHeight * 0.9
 
-    -- create the corret sound 
+    -- create the sounds 
     correctSound = audio.loadSound( "Sounds/Correct.wav" )
+    booSound = audio.loadSound( "Sounds/boo.mp3" )
+    backgroundMusic = audio.loadSound( "Sounds/backgroundMusic.mp3" )
 
     ----------------------------------------------------------------------------------
     --adding objects to the scene group
@@ -515,6 +547,9 @@ function scene:show( event )
         -- Called when the scene is now on screen.
         -- Insert code here to make the scene come alive.
         -- Example: start timers, begin animation, play audio, etc.
+        audio.play(backgroundMusic, {loops = -1})
+        numCorrect = 0
+        numWrong = 0
         RestartLevel1()
         AddAnswerBoxEventListeners() 
 

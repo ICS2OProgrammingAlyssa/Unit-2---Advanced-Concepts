@@ -27,7 +27,7 @@ sceneName = "you_win"
 local scene = composer.newScene( sceneName ) -- This function doesn't accept a string, only a variable containing a string
 
 -- create the you win sound
-local youWinSound = audio.loadSound( "Sounds/yabbadabalaugh.wav")
+local youWinSound = audio.loadSound( "Sounds/youWinSound.wav")
 
 -----------------------------------------------------------------------------------------
 -- DISPLAY OBJECTS
@@ -73,12 +73,13 @@ function scene:show( event )
 
     -----------------------------------------------------------------------------------------
 
-    audio.play(youWinSound)
+    
 
     elseif ( phase == "did" ) then
         -- Called when the scene is now on screen.
         -- Insert code here to make the scene come alive.
         -- Example: start timers, begin animation, play audio, etc.
+        audio.play(youWinSound)
     end
 
 end -- function scene:show( event )

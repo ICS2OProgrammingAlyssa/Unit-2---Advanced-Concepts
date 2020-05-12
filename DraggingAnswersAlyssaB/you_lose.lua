@@ -68,7 +68,7 @@ function scene:show( event )
 
     -----------------------------------------------------------------------------------------
 
-    audio.play(youLoseSound)
+    
 
     if ( phase == "will" ) then
         -- Called when the scene is still off screen (but is about to come on screen).
@@ -79,6 +79,7 @@ function scene:show( event )
         -- Called when the scene is now on screen.
         -- Insert code here to make the scene come alive.
         -- Example: start timers, begin animation, play audio, etc.
+        audio.play(youLoseSound)
     end
 
 end -- function scene:show( event )
