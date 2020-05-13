@@ -85,7 +85,9 @@ function scene:show( event )
         -- Called when the scene is now on screen.
         -- Insert code here to make the scene come alive.
         -- Example: start timers, begin animation, play audio, etc.
-        youWinSoundChannel = audio.play( youWinSound )
+        if (soundOn == true) then
+            youWinSoundChannel = audio.play( youWinSound )
+        end
     end
 
 end

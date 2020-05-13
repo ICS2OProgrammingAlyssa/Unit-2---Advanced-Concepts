@@ -83,6 +83,15 @@ local dieSound
 local backgroundMusic
 local backgroundMusicChannel
 
+local muteButton
+local unmuteButton
+
+----------------------------------------------------------------------------------------
+-- GLOBAL VARIABLES
+---------------------------------------------------------------------------------------
+
+soundOn = true
+
 -----------------------------------------------------------------------------------------
 -- LOCAL SCENE FUNCTIONS
 ----------------------------------------------------------------------------------------- 
@@ -138,6 +147,40 @@ end
 local function RemoveRuntimeListeners()
     Runtime:removeEventListener("enterFrame", movePlayer)
     Runtime:removeEventListener("touch", stop )
+end
+
+local function Mute(touch)
+    if (touch.phase == "ended") then
+        -- pause the Music
+        audio.pause(backgroundMusicChannel)
+        -- turn the sound variable off
+        soundOn = false
+        -- make the unmute button invisible and the mute button visible
+        muteButton.isVisible = true
+        unmuteButton.isVisible = false
+    end
+end
+
+local function Unmute(touch)
+    if (touch.phase == "ended") then
+        -- pause the Music
+        audio.resume(backgroundMusicChannel)
+        -- turn the sound variable off
+        soundOn = true
+        -- make the unmute button visible and the mute button invisible
+        muteButton.isVisible = false
+        unmuteButton.isVisible = true
+    end
+end
+ 
+local function AddMuteUnmuteListeners()
+    unmuteButton:addEventListener("touch", Mute)
+    muteButton:addEventListener("touch", Unmute)
+end
+
+local function RemoveMuteUnmuteListeners()
+    unmuteButton:removeEventListener("touch", Mute)
+    muteButton:removeEventListener("touch", Unmute)
 end
 
 
@@ -199,8 +242,10 @@ local function onCollision( self, event )
             (event.target.myName == "spikes2") or
             (event.target.myName == "spikes3") then
 
-            -- add sound effect here
-            dieSoundChannel = audio.play(dieSound)
+            if (soundOn == true) then
+                -- add sound effect here
+                dieSoundChannel = audio.play(dieSound)
+            end
 
             -- remove runtime listeners that move the character
             RemoveArrowEventListeners()
@@ -576,6 +621,24 @@ function scene:create( event )
     -- create the background background Music
     backgroundMusic = audio.loadSound("Sounds/backgroundMusic.mp3")
 
+    -- mute button
+    muteButton = display.newImageRect( "Images/muteButton.png", 70, 70 )
+    muteButton.x = 50
+    muteButton.y = 730
+    muteButton.isVisible = false
+
+    -- Insert objects into the scene group in order to ONLY be associated with this scene
+    sceneGroup:insert( muteButton )
+
+    -- unmute button
+    unmuteButton = display.newImageRect( "Images/unmuteButton.png", 70, 70 )
+    unmuteButton.x = 50
+    unmuteButton.y = 730
+    unmuteButton.isVisible = true
+
+    -- Insert objects into the scene group in order to ONLY be associated with this scene
+    sceneGroup:insert( unmuteButton )
+
 end --function scene:create( event )
 
 -----------------------------------------------------------------------------------------
@@ -609,7 +672,7 @@ function scene:show( event )
         questionsAnswered = 0
 
         -- play the background Music
-        backgroundMusicChannel = audio.play(backgroundMusic)
+        backgroundMusicChannel = audio.play(backgroundMusic, { loops = -1})
 
         -- make all soccer balls visible
         MakeSoccerBallsVisible()
@@ -625,6 +688,9 @@ function scene:show( event )
 
         -- create the character, add physics bodies and runtime listeners
         ReplaceCharacter()
+
+        -- add the mute and unmute button listeners
+        AddMuteUnmuteListeners()
 
     end
 
@@ -654,7 +720,7 @@ function scene:hide( event )
         -- Called immediately after scene goes off screen.
         RemoveCollisionListeners()
         RemovePhysicsBodies()
-
+        RemoveMuteUnmuteListeners()
         physics.stop()
         RemoveArrowEventListeners()
         RemoveRuntimeListeners()
